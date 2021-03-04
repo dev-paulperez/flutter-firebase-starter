@@ -5,6 +5,8 @@ import 'package:firebasestarter/services/auth/auth_service.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart';
+import 'package:firebase_auth_platform_interface/src/action_code_settings.dart';
 
 class FirebaseAuthService implements AuthService {
   final Auth.FirebaseAuth _firebaseAuth = Auth.FirebaseAuth.instance;
@@ -60,6 +62,41 @@ class FirebaseAuthService implements AuthService {
       password: password,
     );
     return _mapFirebaseUser(userCredential.user);
+  }
+
+  @override
+  Future<User> signInWithEmailAndLink({String email, String link}) async {
+    final userCredential =
+        await _firebaseAuth.signInWithEmailLink(email: email, emailLink: link);
+    return _mapFirebaseUser(userCredential.user);
+  }
+
+  @override
+  bool isSignInWithEmailLink(String link) {
+    return _firebaseAuth.isSignInWithEmailLink(link);
+  }
+
+  @override
+  Future<void> sendSignInWithEmailLink({
+    @required String email,
+    @required String url,
+    @required bool handleCodeInApp,
+    @required String iOSBundleId,
+    @required String androidPackageName,
+    @required bool androidInstallApp,
+    @required String androidMinimumVersion,
+  }) async {
+    await _firebaseAuth.sendSignInLinkToEmail(
+      email: email,
+      actionCodeSettings: ActionCodeSettings(
+        url: url,
+        handleCodeInApp: handleCodeInApp,
+        iOSBundleId: iOSBundleId,
+        androidPackageName: androidPackageName,
+        androidInstallApp: androidInstallApp,
+        androidMinimumVersion: androidMinimumVersion,
+      ),
+    );
   }
 
   @override

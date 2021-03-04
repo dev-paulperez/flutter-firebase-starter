@@ -91,6 +91,7 @@ class Strings {
 
   //Dynamic Links
   static const prefix = 'https://somnioboilerplate.page.link';
+  static const authorizedDomain = 'https://fir-starter-7c18f.firebaseapp.com';
   static const firebaseProjectURL =
       'https://fir-starter-7c18f.firebaseapp.com/';
 }
