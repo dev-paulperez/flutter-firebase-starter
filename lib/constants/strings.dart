@@ -88,4 +88,9 @@ class Strings {
   static const clear = 'Clear';
   static const applyFilters = 'Apply Filters';
   static const workingArea = 'Working Area';
+
+  //Dynamic Links
+  static const prefix = 'https://somnioboilerplate.page.link';
+  static const firebaseProjectURL =
+      'https://fir-starter-7c18f.firebaseapp.com/';
 }
