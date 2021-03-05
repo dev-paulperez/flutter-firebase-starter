@@ -119,5 +119,7 @@
 
   "skip": "Saltar",
 
-  "done": "Listo"
+  "done": "Listo",
+
+  "submitYourEmail": "Ingresa tu email y te enviaremos un link de activación."
 }

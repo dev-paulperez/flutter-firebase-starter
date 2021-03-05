@@ -1,10 +1,13 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebasestarter/app.dart';
 import 'package:firebasestarter/services/analytics/analytics_service.dart';
 import 'package:firebasestarter/services/analytics/firebase_analytics_service.dart';
 import 'package:firebasestarter/services/app_info/app_info.dart';
 import 'package:firebasestarter/services/auth/auth_service.dart';
 import 'package:firebasestarter/services/auth/firebase_auth_service.dart';
+import 'package:firebasestarter/services/dynamic_links/dynamic_links_handler.dart';
+import 'package:firebasestarter/services/dynamic_links/email_secure_storage.dart';
 import 'package:firebasestarter/services/image_picker/image_picker_service.dart';
 import 'package:firebasestarter/services/image_picker/image_service.dart';
 import 'package:firebasestarter/services/storage/firebase_storage_service.dart';
@@ -31,4 +34,10 @@ void initServices() {
   GetIt.I.registerLazySingleton<AuthService>(() => FirebaseAuthService());
   GetIt.I.registerLazySingleton<ImageService>(() => PickImageService());
   GetIt.I.registerLazySingleton<StorageService>(() => FirebaseStorageService());
+  GetIt.I.registerLazySingleton<FirebaseEmailLinkHandler>(
+      () => FirebaseEmailLinkHandler(
+            auth: FirebaseAuthService(),
+            emailStore: EmailSecureStore(),
+            firebaseDynamicLinks: FirebaseDynamicLinks.instance,
+          ));
 }

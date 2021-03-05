@@ -1,8 +1,10 @@
 import 'package:firebasestarter/bloc/login/login_bloc.dart';
 import 'package:firebasestarter/bloc/login/login_event.dart';
 import 'package:firebasestarter/constants/colors.dart';
+import 'package:firebasestarter/constants/strings.dart';
 import 'package:firebasestarter/screens/auth/create_account_screen.dart';
 import 'package:firebasestarter/screens/auth/forgot_password_screen.dart';
+import 'package:firebasestarter/screens/auth/login_with_email_screen.dart';
 import 'package:firebasestarter/widgets/auth/login_provider_buttons_section.dart';
 import 'package:firebasestarter/widgets/common/button.dart';
 import 'package:firebasestarter/widgets/common/margin.dart';
@@ -19,6 +21,13 @@ class LoginForm extends StatelessWidget {
         context,
         MaterialPageRoute(
           builder: (context) => CreateAccountScreen(),
+        ),
+      );
+
+  void _goToEmailSignIn(BuildContext context) => Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => LogInWithEmailScreen(),
         ),
       );
 
@@ -129,6 +138,12 @@ class LoginForm extends StatelessWidget {
             backgroundColor: AppColor.blue,
             text: AppLocalizations.of(context).login,
             onTap: () => bloc.add(const StartLogin()),
+          ),
+          Margin(0, 21.0),
+          Button(
+            backgroundColor: AppColor.blue,
+            text: Strings.emailSignIn,
+            onTap: () => _goToEmailSignIn(context),
           ),
           Margin(0, 26.0),
           _orStory(context),

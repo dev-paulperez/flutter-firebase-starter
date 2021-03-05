@@ -5,7 +5,6 @@ import 'package:firebasestarter/services/dynamic_links/email_secure_storage.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
-import 'package:rxdart/rxdart.dart';
 
 enum EmailLinkErrorType {
   linkError,
@@ -13,36 +12,6 @@ enum EmailLinkErrorType {
   emailNotSet,
   signInFailed,
   userAlreadySignedIn,
-}
-
-class EmailLinkError {
-  EmailLinkError({@required this.error, this.description});
-  final EmailLinkErrorType error;
-  final String description;
-
-  Map<EmailLinkErrorType, String> get _messages => {
-        //       EmailLinkErrorType.linkError: description,
-        //       EmailLinkErrorType.isNotSignInWithEmailLink:
-        //           Strings.isNotSignInWithEmailLinkMessage,
-        //       EmailLinkErrorType.emailNotSet: Strings.submitEmailAgain,
-        //       EmailLinkErrorType.signInFailed: description,
-        //       EmailLinkErrorType.userAlreadySignedIn: Strings.userAlreadySignedIn,
-        //     };
-
-        // String get message => _messages[error];
-
-        // @override
-        // String toString() => '$error: ${_messages[error]}';
-
-        // @override
-        // int get hashCode => error.hashCode;
-        // @override
-        // bool operator ==(dynamic other) {
-        //   if (other is EmailLinkError) {
-        //     return error == other.error && description == other.description;
-        //   }
-        //   return false;
-      };
 }
 
 /// Checks incoming dynamic links and uses them to sign in the user with Firebase
@@ -56,17 +25,11 @@ class FirebaseEmailLinkHandler {
   final EmailSecureStore emailStore;
   final FirebaseDynamicLinks firebaseDynamicLinks;
 
-  /// Sets up listeners to process all links from [FirebaseDynamicLinks.instance.getInitialLink()] and [FirebaseDynamicLinks.instance.onLink]
   Future<void> init() async {
     try {
       // Listen to incoming links when the app is open
       firebaseDynamicLinks.onLink(
         onSuccess: (linkData) => _processDynamicLink(linkData?.link),
-        onError: (error) => _handleLinkError(PlatformException(
-          code: error.code,
-          message: error.message,
-          details: error.details,
-        )),
       );
 
       // Check dynamic link once on app startup.
@@ -77,31 +40,16 @@ class FirebaseEmailLinkHandler {
         await _processDynamicLink(linkData?.link);
       }
     } on PlatformException catch (e) {
-      _handleLinkError(e);
+      rethrow;
     }
   }
-
-  /// Clients can listen to this stream and show error alerts when dynamic link processing fails
-  final PublishSubject<EmailLinkError> _errorController =
-      PublishSubject<EmailLinkError>();
-  Stream<EmailLinkError> get errorStream => _errorController.stream;
 
   /// Clients can listen to this stream and show a loading indicator while sign in is in progress
   final ValueNotifier<bool> isLoading = ValueNotifier<bool>(false);
 
   Future<String> getEmail() => emailStore.getEmail();
 
-  Future<dynamic> _handleLinkError(PlatformException error) {
-    _errorController.add(EmailLinkError(
-      error: EmailLinkErrorType.linkError,
-      description: error.message,
-    ));
-
-    return Future<dynamic>.value();
-  }
-
   void dispose() {
-    _errorController.close();
     isLoading.dispose();
   }
 
@@ -117,32 +65,19 @@ class FirebaseEmailLinkHandler {
       // check that user is not signed in
       final user = await auth.currentUser();
       if (user != null) {
-        _errorController.add(EmailLinkError(
-          error: EmailLinkErrorType.userAlreadySignedIn,
-        ));
         return;
       }
       // check that email is set
       final email = await emailStore.getEmail();
       if (email == null) {
-        _errorController.add(EmailLinkError(
-          error: EmailLinkErrorType.emailNotSet,
-        ));
         return;
       }
       // sign in
       if (auth.isSignInWithEmailLink(link)) {
         await auth.signInWithEmailAndLink(email: email, link: link);
-      } else {
-        _errorController.add(EmailLinkError(
-          error: EmailLinkErrorType.isNotSignInWithEmailLink,
-        ));
       }
     } on PlatformException catch (e) {
-      _errorController.add(EmailLinkError(
-        error: EmailLinkErrorType.signInFailed,
-        description: e.message,
-      ));
+      rethrow;
     } finally {
       isLoading.value = false;
     }

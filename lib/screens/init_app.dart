@@ -10,7 +10,7 @@ import 'package:firebasestarter/bloc/login/login_state.dart';
 import 'package:firebasestarter/screens/auth/login_screen.dart';
 import 'package:firebasestarter/screens/onboarding/onboarding_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 
 class DetermineAccessScreen extends StatefulWidget {
   @override
@@ -52,8 +52,7 @@ class _DetermineAccessScreenState extends State<DetermineAccessScreen> {
 
   @override
   Widget build(BuildContext context) {
-    _emailLinkHandler =
-        Provider.of<FirebaseEmailLinkHandler>(context, listen: false);
+    _emailLinkHandler = GetIt.I<FirebaseEmailLinkHandler>();
     return BlocBuilder<InitAppBloc, FirstTimeInAppState>(
       cubit: _initAppBloc,
       builder: (context, initAppState) {

@@ -304,6 +304,11 @@
   "done": "Done",
   "@done":{
       "description": ""
+  },
+
+  "submitYourEmail": "Submit your email address to receive an activation link.",
+  "@submitYourEmail":{
+      "description": ""
   }  
 
 }
