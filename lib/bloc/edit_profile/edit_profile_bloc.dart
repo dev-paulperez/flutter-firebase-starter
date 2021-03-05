@@ -1,79 +1,115 @@
 import 'dart:io';
-import 'package:firebasestarter/bloc/forms/edit_profile_form.dart';
-import 'package:firebasestarter/models/datatypes/storage_service_type.dart';
-import 'package:firebasestarter/models/service_factory.dart';
+import 'package:firebasestarter/bloc/edit_profile/edit_profile_event.dart';
 import 'package:firebasestarter/bloc/edit_profile/edit_profile_state.dart';
-import 'package:firebasestarter/services/auth/firebase_auth_service.dart';
-import 'package:firebasestarter/services/image_picker/image_picker_service.dart';
+import 'package:firebasestarter/bloc/forms/edit_profile_form.dart';
+import 'package:firebasestarter/services/auth/auth_service.dart';
+import 'package:firebasestarter/services/image_picker/image_service.dart';
 import 'package:firebasestarter/services/storage/storage_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_it/get_it.dart';
 import 'package:image_picker/image_picker.dart';
 
-class EditProfileBloc extends EditProfileFormBloc {
-  final _authService = FirebaseAuthService();
+class EditProfileBloc extends Bloc<EditProfileEvent, EditProfileState> {
+  static const _errEvent = 'Error: Invalid event in [edit_profile_bloc.dart]';
+  AuthService _authService;
   StorageService _storageService;
-  final _serviceFactory = ServiceFactory();
-  PickedFile _image;
+  ImageService _imageService;
+  PickedFile _pickedPhoto;
+  final form = EditProfileFormBloc();
 
-  EditProfileBloc() : super() {
-    _serviceFactory
-        .getStorageService(StorageServiceType.Firebase)
-        .then((value) => _storageService);
+  EditProfileBloc() : super(const NotDetermined()) {
+    _authService = GetIt.I.get<AuthService>();
+    _storageService = GetIt.I.get<StorageService>();
+    _imageService = GetIt.I.get<ImageService>();
   }
 
-  Future<void> pickImageFromCamera() async {
-    emit(const Loading());
-    _image = await PickImageService.imgFromCamera();
-    if (_image == null) {
-      return emit(const Error('Insert valid image'));
+  @override
+  Stream<EditProfileState> mapEventToState(EditProfileEvent event) async* {
+    switch (event.runtimeType) {
+      case UploadPhotoWithCamera:
+        yield* _updateUserPhoto(_imageService.imgFromCamera);
+        break;
+      case UpdatePhotoWithLibrary:
+        yield* _updateUserPhoto(_imageService.imgFromGallery);
+        break;
+      case UpdateProfileInfo:
+        yield* _updateProfile();
+        break;
+      case GetCurrentUser:
+        yield* _mapGetCurrentUserEventToState();
+        break;
+      default:
+        yield const Error(_errEvent);
     }
+  }
+
+  Stream<EditProfileState> _mapGetCurrentUserEventToState() async* {
+    yield const Loading();
     try {
       final user = await _authService.currentUser();
-      final userId = user.id;
-      await _storageService.uploadFile(File(_image.path), userId);
-      final imageURL = await _storageService.downloadURL(userId);
+      form.onFirstNameChanged(user.firstName);
+      form.onLastNameChanged(user.lastName);
+      yield CurrentUser(user);
+      _pickedPhoto = PickedFile(user.imageUrl);
+      yield AvatarChanged(user.imageUrl);
+    } catch (e) {
+      yield const Error('Error: Something went wrong');
+    }
+  }
+
+  Stream<EditProfileState> _updateUserPhoto(
+    Future<PickedFile> Function() uploadMethod,
+  ) async* {
+    try {
+      final image = await uploadMethod();
+      if (image == null) {
+        yield const Error('Error: Insert valid image');
+        return;
+      }
+      _pickedPhoto = image;
+      yield AvatarChanged(_pickedPhoto.path);
+    } catch (err) {
+      yield Error(err.toString());
+    }
+  }
+
+  Future<void> _uploadProfilePicture() async {
+    try {
+      if (_pickedPhoto == null) throw 'Error: Invalid photo';
+      final user = await _authService.currentUser();
+      final extension = _pickedPhoto.path.split('.').last;
+      final path = '/users/${user.id}.${extension}';
+      final file = File(_pickedPhoto.path);
+      await _storageService.uploadFile(file, path);
+      final imageURL = await _storageService.downloadURL(path);
       await _authService.changeProfile(photoURL: imageURL);
-      emit(AvatarChanged(imageURL));
     } catch (e) {
-      emit(Error(e.toString()));
+      throw e.toString();
     }
   }
 
-  Future<String> getURL() async {
-    final user = await _authService.currentUser();
-    final url = user.imageUrl;
-    return url;
-  }
+  Stream<EditProfileState> _updateProfile() async* {
+    yield const Loading();
 
-  Future<void> pickImageFromGallery() async {
-    emit(const Loading());
-    _image = await PickImageService.imgFromGallery();
-    if (_image == null) {
-      return emit(const Error('Insert valid image'));
-    }
     try {
       final user = await _authService.currentUser();
-      final userId = user.id;
-      await _storageService.uploadFile(File(_image.path), userId);
-      final imageURL = await _storageService.downloadURL(userId);
+      if (user.firstName == form.firstNameVal &&
+          user.lastName == form.lastNameVal &&
+          (user.imageUrl == _pickedPhoto.path || _pickedPhoto == null)) {
+        yield const ProfileEdited();
+        return;
+      }
+      if (user.imageUrl != _pickedPhoto.path) {
+        await _uploadProfilePicture();
+      }
       await _authService.changeProfile(
-          firstName: user.firstName,
-          lastName: user.lastName,
-          photoURL: imageURL);
-      emit(AvatarChanged(imageURL));
+        firstName: form.firstNameVal,
+        lastName: form.lastNameVal,
+      );
+      yield const ProfileEdited();
+      yield AvatarChanged(user.imageUrl);
     } catch (e) {
-      emit(Error(e));
-    }
-  }
-
-  Future<void> editProfile() async {
-    emit(const Loading());
-    try {
-      await _authService.changeProfile(
-          firstName: firstNameController.value,
-          lastName: lastNameController.value);
-      emit(const ProfileEdited());
-    } catch (e) {
-      emit(Error(e));
+      yield Error(e);
     }
   }
 }

@@ -24,8 +24,9 @@ class InitAppBloc extends Bloc<FirstTimeInAppEvent, FirstTimeInAppState> {
     yield const Loading();
     final prefs = await SharedPreferences.getInstance();
     final result = (prefs.getBool(_isFirstTime) ?? true);
+
     if (result) {
-      prefs.setBool(_isFirstTime, false);
+      await prefs.setBool(_isFirstTime, false);
       yield const FirstTime();
     } else {
       yield const NoFirstTime();

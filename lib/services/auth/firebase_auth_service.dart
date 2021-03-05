@@ -15,10 +15,14 @@ class FirebaseAuthService implements AuthService {
     if (user == null) {
       return null;
     }
-    final map = {
+    var splittedName = ['Name ', 'LastName'];
+    if (user.displayName != null) {
+      splittedName = user.displayName.split(' ');
+    }
+    final map = <String, dynamic>{
       'id': user.uid ?? '',
-      'firstName': user.displayName ?? '',
-      'lastName': user.displayName ?? '',
+      'firstName': splittedName.first ?? '',
+      'lastName': splittedName.last ?? '',
       'email': user.email ?? '',
       'emailVerified': user.emailVerified ?? false,
       'imageUrl': user.photoURL ?? '',
@@ -55,13 +59,26 @@ class FirebaseAuthService implements AuthService {
   }
 
   @override
-  Future<User> createUserWithEmailAndPassword(
-      String email, String password) async {
-    final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-    return _mapFirebaseUser(userCredential.user);
+  Future<User> createUserWithEmailAndPassword({
+    String name,
+    String lastName,
+    String email,
+    String password,
+  }) async {
+    try {
+      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      await userCredential.user.updateProfile(
+        displayName: name + ' ' + lastName,
+      );
+      await userCredential.user.reload();
+      print(_firebaseAuth.currentUser.displayName);
+      return _mapFirebaseUser(_firebaseAuth.currentUser);
+    } catch (err) {
+      throw err.toString();
+    }
   }
 
   @override

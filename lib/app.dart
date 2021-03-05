@@ -4,12 +4,15 @@ import 'package:firebasestarter/screens/init_app.dart';
 import 'package:firebasestarter/services/auth/firebase_auth_service.dart';
 import 'package:firebasestarter/services/dynamic_links/dynamic_links_handler.dart';
 import 'package:firebasestarter/services/dynamic_links/email_secure_storage.dart';
+import 'package:firebase_analytics/observer.dart';
+import 'package:firebasestarter/services/analytics/analytics_service.dart';
 import 'package:firebasestarter/services/notifications/notifications_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:get_it/get_it.dart';
 
 class App extends StatefulWidget {
   @override
@@ -65,6 +68,10 @@ class _FirebaseStarterState extends State<FirebaseStarter> {
         ],
         supportedLocales: AppLocalizations.supportedLocales,
         home: DetermineAccessScreen(),
+        navigatorObservers: [
+          FirebaseAnalyticsObserver(
+              analytics: GetIt.I.get<AnalyticsService>().getService()),
+        ],
       ),
     );
   }

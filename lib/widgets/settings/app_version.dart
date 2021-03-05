@@ -1,3 +1,5 @@
+import 'package:firebasestarter/services/remote_config/remote_config.dart';
+import 'package:firebasestarter/constants/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 
@@ -13,11 +15,13 @@ class _AppVersionState extends State<AppVersion> {
     version: '',
     buildNumber: '',
   );
+  RemoteConfigService _remoteConfigService;
 
   @override
   void initState() {
     super.initState();
     _initPackageInfo();
+    _initializeRemoteConfig();
   }
 
   Future<void> _initPackageInfo() async {
@@ -27,16 +31,23 @@ class _AppVersionState extends State<AppVersion> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          'v${_packageInfo.version}',
-          style: Theme.of(context).textTheme.headline6,
-        ),
-      ],
-    );
+  Future<void> _initializeRemoteConfig() async {
+    _remoteConfigService = await RemoteConfigService().getInstance();
+    await _remoteConfigService.initialize();
   }
+
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            'v${_remoteConfigService.getStringValueIos}',
+            style: const TextStyle(
+              color: AppColor.grey,
+              fontSize: 20.0,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      );
 }
