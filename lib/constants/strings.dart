@@ -30,6 +30,12 @@ class Strings {
   static const buildNumber = 'Build Number';
   static const packageName = 'Package Name';
 
+  //Login With Email Screen
+  static const emailSignIn = 'Email Sign In';
+  static const sendActivationLink = 'Send activation link';
+  static const submitYourEmail =
+      'Submit your email address to receive an activation link.';
+
   //Forgot password
   static const forgotPassword = 'Forgot Password';
   static const send = 'Send';

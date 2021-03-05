@@ -34,6 +34,7 @@ class _DetermineAccessScreenState extends State<DetermineAccessScreen> {
     await _emailLinkHandler
         .init()
         .then((_) => _bloc.add(const CheckIfUserIsLoggedIn()));
+    _bloc.add(const CheckIfUserIsLoggedIn());
     super.didChangeDependencies();
   }
 

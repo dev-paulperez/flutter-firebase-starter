@@ -1,4 +1,4 @@
-import 'package:firebasestarter/screens/auth/create_account_with_email.dart';
+import 'package:firebasestarter/screens/auth/login_with_email_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:firebasestarter/screens/home.dart';
@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _goToEmailSignIn() => Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => CreateAccountWithEmailScreen(),
+          builder: (context) => LogInWithEmailScreen(),
         ),
       );
 
@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
         'text': Strings.login,
         'asset': Assets.anonLogin,
         'onTap': () => _bloc.add(const StartAnonymousLogin()),
-      }
+      },
     ];
     return Column(
       children: [
@@ -168,11 +168,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   _customLoginForm(),
                   const SizedBox(height: 10),
                   _socialNetworkButtons(),
-                  RaisedButton(
-                    onPressed: _goToEmailSignIn,
-                    child: const Text('Email Sign In'),
-                    color: Colors.blue,
-                  ),
                 ],
               ),
             ),
