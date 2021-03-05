@@ -40,7 +40,7 @@ class FirebaseEmailLinkHandler {
         await _processDynamicLink(linkData?.link);
       }
     } on PlatformException catch (e) {
-      rethrow;
+      throw (e);
     }
   }
 
@@ -77,7 +77,7 @@ class FirebaseEmailLinkHandler {
         await auth.signInWithEmailAndLink(email: email, link: link);
       }
     } on PlatformException catch (e) {
-      rethrow;
+      throw (e);
     } finally {
       isLoading.value = false;
     }
