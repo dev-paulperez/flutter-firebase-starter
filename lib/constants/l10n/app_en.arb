@@ -329,6 +329,49 @@
   "noEmployees": "No employees found",
   "@noEmployees":{
       "description": ""
+  },
+
+  "or": "OR",
+  "@or":{
+      "description": ""
+  },
+
+  "validNumber": "Insert a number please.",
+  "@validNumber":{
+      "description": ""
+  },
+
+  "validText": "Insert a valid text please.",
+  "@validText":{
+      "description": ""
+  },
+
+  "validEmail": "Insert a valid email please.",
+  "@validEmail":{
+      "description": ""
+  },
+
+  "validPassword": "Insert a valid password please.",
+  "@validPassword":{
+      "description": ""
+  },
+
+"close": "Close",
+  "@close":{
+      "description": ""
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }

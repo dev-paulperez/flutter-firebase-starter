@@ -22,18 +22,21 @@ class CreateAccountForm extends StatelessWidget {
           stream: bloc.form.firstName,
           labelText: _localizedStrings.firstName,
           onChanged: (firstName) => bloc.form.onFirstNameChanged(firstName),
+          errorMessage: AppLocalizations.of(context).validText,
         ),
         Margin(0.0, 20.5),
         TextFieldBuilder(
           stream: bloc.form.lastName,
           labelText: _localizedStrings.lastName,
           onChanged: (lastName) => bloc.form.onLastNameChanged(lastName),
+          errorMessage: AppLocalizations.of(context).validText,
         ),
         Margin(0.0, 20.5),
         TextFieldBuilder(
           stream: bloc.form.email,
           labelText: _localizedStrings.email,
           onChanged: (email) => bloc.form.onEmailChanged(email),
+          errorMessage: AppLocalizations.of(context).validEmail,
         ),
         Margin(0.0, 20.5),
         TextFieldBuilder(
@@ -42,6 +45,7 @@ class CreateAccountForm extends StatelessWidget {
           onChanged: (password) => bloc.form.onPasswordChanged(password),
           isPassword: true,
           showPasswordButton: true,
+          errorMessage: AppLocalizations.of(context).validPassword,
         ),
         Margin(0.0, 20.5),
         TextFieldBuilder(
@@ -51,6 +55,7 @@ class CreateAccountForm extends StatelessWidget {
               bloc.form.onPasswordConfirmationChanged(passwordConf),
           isPassword: true,
           showPasswordButton: true,
+          errorMessage: AppLocalizations.of(context).validPassword,
         ),
         Margin(0.0, 49.5),
         Button(

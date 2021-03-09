@@ -5,7 +5,7 @@ import 'package:firebasestarter/widgets/profile/user_info_section.dart';
 import 'package:flutter/material.dart';
 import 'package:firebasestarter/bloc/user/user_bloc.dart';
 import 'package:firebasestarter/bloc/user/user_state.dart';
-import 'package:firebasestarter/constants/strings.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 
@@ -39,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
         appBar: CustomAppBar(
           goBack: false,
-          title: Strings.myProfile,
+          title: AppLocalizations.of(context).myProfile,
           suffixWidget: _settingsIcon(),
         ),
         body: BlocBuilder<UserBloc, UserState>(

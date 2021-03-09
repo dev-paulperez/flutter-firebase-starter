@@ -34,7 +34,7 @@ class EditProfileScreen extends StatelessWidget {
             DialogHelper.showAlertDialog(
               context: context,
               story: state.message,
-              btnText: 'Close',
+              btnText: AppLocalizations.of(context).close,
               btnAction: () => Navigator.pop(context),
             );
           }

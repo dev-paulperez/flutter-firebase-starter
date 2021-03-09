@@ -129,5 +129,21 @@
 
   "anonymousSignIn": "Iniciar sesión anónima",
   
-  "noEmployees": "No se han encontrado empleados"
+  "noEmployees": "No se han encontrado empleados",
+
+  "or": "O",
+
+  "validNumber": "Inserte un número por favor.",
+
+  "validText": "Inserte un texto válido por favor.",
+
+  "validEmail": "Inserte un email válido por favor.",
+
+  "validPassword": "Inserte una contraseña válida por favor.",
+
+  "close": "Cerrar"
+
+
 }
+
+

@@ -68,14 +68,14 @@ class LoginForm extends StatelessWidget {
               height: 0.5,
               width: MediaQuery.of(context).size.width / 3,
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(
+            Padding(
+              padding: const EdgeInsets.symmetric(
                 vertical: 0.0,
                 horizontal: 5.0,
               ),
               child: Text(
-                'OR',
-                style: TextStyle(
+                AppLocalizations.of(context).or,
+                style: const TextStyle(
                   color: AppColor.grey,
                   fontSize: 13.0,
                   fontWeight: FontWeight.w400,
@@ -121,6 +121,7 @@ class LoginForm extends StatelessWidget {
           stream: bloc.form.email,
           labelText: _localizedStrings.email,
           onChanged: (email) => bloc.form.onEmailChanged(email),
+          errorMessage: AppLocalizations.of(context).validEmail,
         ),
         Margin(0, 20.0),
         TextFieldBuilder(
@@ -129,6 +130,7 @@ class LoginForm extends StatelessWidget {
           onChanged: (password) => bloc.form.onPasswordChanged(password),
           isPassword: true,
           showPasswordButton: true,
+          errorMessage: AppLocalizations.of(context).validPassword,
         ),
         Margin(0, 27.5),
         _forgotPasswordStory(context),

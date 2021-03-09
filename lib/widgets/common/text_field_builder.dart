@@ -6,6 +6,7 @@ class TextFieldBuilder extends StatefulWidget {
   final String labelText;
   final void Function(String) onChanged;
   final Stream<String> stream;
+  final String errorMessage;
   final bool isPassword;
   final EdgeInsets margin;
   final String prefix;
@@ -17,6 +18,7 @@ class TextFieldBuilder extends StatefulWidget {
     this.labelText,
     this.onChanged,
     this.stream,
+    this.errorMessage,
     this.isPassword = false,
     this.margin = const EdgeInsets.all(0),
     this.prefix,
@@ -85,7 +87,7 @@ class _TextFieldBuilderState extends State<TextFieldBuilder> {
         border: UnderlineInputBorder(
           borderSide: BorderSide(color: Colors.grey[400]),
         ),
-        errorText: snapshot.hasError ? snapshot.error : null,
+        errorText: snapshot.hasError ? widget.errorMessage : null,
       );
 
   TextField _textFieldWithoutInitialValue(AsyncSnapshot<String> snapshot) =>
