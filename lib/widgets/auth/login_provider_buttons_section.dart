@@ -5,6 +5,7 @@ import 'package:firebasestarter/widgets/auth/auth_service_button.dart';
 import 'package:firebasestarter/widgets/common/margin.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'dart:io';
 
 class LoginProviderButtonsSection extends StatelessWidget {
   static const _text = 'text';
@@ -31,12 +32,13 @@ class LoginProviderButtonsSection extends StatelessWidget {
         _onTap: () => bloc.add(const FacebookLoginStarted()),
         _last: false,
       },
-      {
-        _text: _localizedStrings.appleIdSignIn,
-        _asset: Assets.appleLogo,
-        _onTap: () => bloc.add(const AppleLoginStarted()),
-        _last: false,
-      },
+      if (!Platform.isAndroid)
+        {
+          _text: _localizedStrings.appleIdSignIn,
+          _asset: Assets.appleLogo,
+          _onTap: () => bloc.add(const AppleLoginStarted()),
+          _last: false,
+        },
       {
         _text: _localizedStrings.anonymousSignIn,
         _asset: Assets.anonLogin,
